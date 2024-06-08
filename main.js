@@ -12,7 +12,7 @@ app.get('/', async (req, res) => {
   let topPage = '/top?page={pagenumber}';
   let search = '/search?query={query}';
   let latest = '/latest?page={pagenumber}';
-  let readPage = '/read/{mangaId}/{chapter}'
+  let readPage = '/read?id={mangaId}&chapter={chapterNumber}'
   routes.push({infoPage},{topPage},{search},{latest},{readPage})
 
   res.json({
