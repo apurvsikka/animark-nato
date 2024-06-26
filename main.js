@@ -1,10 +1,20 @@
 const express = require('express');
+const cors = require('cors');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
 const app = express();
 const PORT = 3000;
 const BASE_URL = 'https://manganato.com/genre-all';
+
+// Use cors middleware to allow Cross-Origin requests
+app.use(cors());
+
+// Set Access-Control-Allow-Origin header to allow all origins
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+});
 
 app.get('/', async (req, res) => {
   let routes = [];
