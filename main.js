@@ -5,7 +5,7 @@ const cheerio = require('cheerio');
 
 const app = express();
 const PORT = 3000;
-const BASE_URL = 'https://manganato.com/genre-all';
+const BASE_URL = 'https://ww8.mangakakalot.tv/genre-all';
 
 // Use cors middleware to allow Cross-Origin requests
 app.use(cors());
