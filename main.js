@@ -233,7 +233,7 @@ app.get('/search', async (req, res) => {
 // read
 app.get('/read', async (req, res) => {
     const { id, chapter } = req.query;
-    const URL = `https://chapmanganato.to/${id}/chapter-${chapter}`;
+    const URL = `https://ww8.mangakakalot.tv/chapter/${id}/chapter-${chapter}`;
 
     try {
         const { data } = await axios.get(URL);
