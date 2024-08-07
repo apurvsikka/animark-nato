@@ -5,7 +5,7 @@ const cheerio = require('cheerio');
 
 const app = express();
 const PORT = 3000;
-const BASE_URL = 'https://ww8.mangakakalot.tv/genre-all';
+const BASE_URL = 'https://mangakakalot.com/genre-all';
 
 // Use cors middleware to allow Cross-Origin requests
 app.use(cors());
@@ -37,6 +37,7 @@ app.get('/', async (req, res) => {
   })
   res.status(200)
 });
+
 
 app.get('/top', async (req, res) => {
     const page = req.query.page || 1; // Default to page 1 if no page query parameter is provided
