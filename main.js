@@ -240,8 +240,8 @@ app.get('/read', async (req, res) => {
         const $ = cheerio.load(data);
         const mangaPages = [];
 
-        $('.container-chapter-reader img').each((index, element) => {
-            const pageUrl = $(element).attr('src');
+        $('.img-loading').each((index, element) => {
+            const pageUrl = $(element).attr('data-src');
             mangaPages.push(pageUrl);
         });
 
