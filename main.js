@@ -252,7 +252,8 @@ app.get('/read', async (req, res) => {
 // genre-sort
 app.get('/genre/:id', async (req, res) => {
   const id = req.params.id;
-  const page = JSON.parse(req.query.page) || 1;
+  const p1 = req.query.page || 1;
+  const page = JSON.parse(p1) || 1;
   const genreToId = {
       'all': 'all',
       'action': 2,
