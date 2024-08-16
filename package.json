@@ -1,5 +1,5 @@
 {
-  "name": "animark-manga-ext-mangakakalot",
+  "name": "rane-mangakakalot",
   "version": "0.0.1",
   "description": "api to scrape manga data from manganato webiste",
   "main": "main.js",

@@ -5,7 +5,7 @@ const cheerio = require('cheerio');
 
 const app = express();
 const PORT = 3000;
-const BASE_URL = 'https://mangakakalot.com/genre-all';
+const BASE_URL = 'https://mangakakalot.tv';
 
 // Use cors middleware to allow Cross-Origin requests
 app.use(cors());
@@ -41,19 +41,19 @@ app.get('/', async (req, res) => {
 
 app.get('/top', async (req, res) => {
     const page = req.query.page || 1; // Default to page 1 if no page query parameter is provided
-    const url = `${BASE_URL}/${page}?type=topview`;
+    const url = `${BASE_URL}/manga_list?type=topview&category=all&state=all&page=${page}`;
 
     try {
         const { data } = await axios.get(url);
         const $ = cheerio.load(data);
         const results = [];
 
-        $('.content-genres-item').each((index, element) => {
+        $('.list-truyen-item-wrap').each((index, element) => {
             const rank = index + 1
             const title = $(element).find('h3 > a').text().trim();
-            const image = $(element).find('img').attr('src');
-            const id = $(element).find('h3 > a').attr('href').split('/').pop();
-            const latestChapter = $(element).find('.genres-item-chap ').text().trim();
+            const image = $(element).find('.list-story-item img').attr('src');
+            const id = $(element).find('h3 a').attr('href').replace('https://chapmanganato.to/', '');
+            const latestChapter = $(element).find('.list-story-item-wrap-chapter').text().trim();
 
             results.push({
                 rank,
@@ -157,13 +157,15 @@ app.get('/info', async (req, res) => {
         const url = `https://chapmanganato.to/${mangaId}`;
         const { data } = await axios.get(url);
         const $ = cheerio.load(data);
+        const gen_temp = $('tr:nth-child(4) td:nth-child(2)').map((i, el) => $(el).text().trim()).get()
+        const gen_ref = gen_temp[0]
         const mangaInfo = {
             title: $('.story-info-right > h1').text().trim(),
             altTitle: $('tr:nth-child(1) td:nth-child(2) > h2').text().trim(),
             author: $('tr:nth-child(2) td:nth-child(2)').text().trim(),
             description: $('.panel-story-info-description').text().trim(),
             status: $('tr:nth-child(3) td:nth-child(2)').text().trim(),
-            genres: $('tr:nth-child(4) td:nth-child(2)').map((i, el) => $(el).text().trim()).get(),
+            genres: gen_ref.split(' - '),
             updatedOn: $('p > span.stre-value').text().trim(),
         };
         // Extracting chapters
