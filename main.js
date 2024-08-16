@@ -2,10 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const path = require('path')
 
 const app = express();
 const PORT = 3000;
 const BASE_URL = 'https://mangakakalot.tv';
+const ALT = 'https://mangakakalot.com'
 
 // Use cors middleware to allow Cross-Origin requests
 app.use(cors());
@@ -16,32 +18,16 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/', async (req, res) => {
-  let routes = [];
-  let infoPage = '/';
-  let topPage = '/top?page={pagenumber}';
-  let search = '/search?query={query}';
-  let latest = '/latest?page={pagenumber}';
-  let readPage = '/read?id={mangaId}&chapter={chapterNumber}'
-  routes.push({infoPage},{topPage},{search},{latest},{readPage})
+app.use(express.static(path.join(__dirname, 'docs')));
 
-  res.json({
-    provider: 'https://manganato.com',
-    type: "manga",
-    apiName: "manganato",
-    author: "apurvsikka(apurv)",
-    madeOn: "8 june 2024",
-    updatedOn: "8 june 2024",
-    gitLink: 'https://github.com/apurvsikka/api-manganato-animark',
-    routes
-  })
-  res.status(200)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'docs', 'index.html'));
+    res.status(200)
 });
-
 
 app.get('/top', async (req, res) => {
     const page = req.query.page || 1; // Default to page 1 if no page query parameter is provided
-    const url = `${BASE_URL}/manga_list?type=topview&category=all&state=all&page=${page}`;
+    const url = `${ALT}/manga_list?type=topview&category=all&state=all&page=${page}`;
 
     try {
         const { data } = await axios.get(url);
@@ -49,18 +35,21 @@ app.get('/top', async (req, res) => {
         const results = [];
 
         $('.list-truyen-item-wrap').each((index, element) => {
-            const rank = index + 1
+            // const rank = index + 1
             const title = $(element).find('h3 > a').text().trim();
             const image = $(element).find('.list-story-item img').attr('src');
             const id = $(element).find('h3 a').attr('href').replace('https://chapmanganato.to/', '');
             const latestChapter = $(element).find('.list-story-item-wrap-chapter').text().trim();
+            const description = $(element).find('p').text().trim()
+
 
             results.push({
-                rank,
+                // rank,
                 title,
                 image,
                 id,
-                latestChapter
+                latestChapter,
+                description
             });
         });
 
@@ -84,6 +73,9 @@ app.get('/top', async (req, res) => {
               results
           });
         }
+        else {
+          res.send('Page Not Available')
+        }
 
     } catch (error) {
         console.error(error);
@@ -93,25 +85,27 @@ app.get('/top', async (req, res) => {
 // latest manga from nato
 app.get('/latest', async (req, res) => {
     const page = req.query.page || 1; // Default to page 1 if no page query parameter is provided
-    const url = `${BASE_URL}/${page}`;
+    const url = `${ALT}/manga_list?type=latest&category=all&state=all&page=${page}`;
     try {
         const { data } = await axios.get(url);
         const $ = cheerio.load(data);
         const results = [];
 
-        $('.content-genres-item').each((index, element) => {
+        $('.list-truyen-item-wrap').each((index, element) => {
             const title = $(element).find('h3 > a').text().trim();
-            const image = $(element).find('img').attr('src');
+            const image = $(element).find('.list-story-item > img').attr('src');
             const link = $(element).find('h3 > a').attr('href');
-            const latestChapter = $(element).find('.genres-item-chap').text().trim();
+            const latestChapter = $(element).find('.list-story-item-wrap-chapter').text().trim();
             const id = link.split('/').pop(); // Extracting manga ID
+            const description = $(element).find('p').text().trim()
 
             results.push({
                 id,
                 title,
                 image,
                 id,
-                latestChapter
+                latestChapter,
+                description
             });
         });
 
@@ -201,7 +195,7 @@ app.get('/search', async (req, res) => {
     }
 
     try {
-        const url = `https://manganato.com/search/story/${encodeURIComponent(query)}`;
+        const url = `${ALT}/search/story/${encodeURIComponent(query)}`;
         const { data } = await axios.get(url);
         const $ = cheerio.load(data);
         const results = [];
@@ -236,7 +230,7 @@ app.get('/search', async (req, res) => {
 // read
 app.get('/read', async (req, res) => {
     const { id, chapter } = req.query;
-    const URL = `https://ww8.mangakakalot.tv/chapter/${id}/chapter-${chapter}`;
+    const URL = `${BASE_URL}/chapter/${id}/chapter-${chapter}`;
 
     try {
         const { data } = await axios.get(URL);
@@ -253,6 +247,84 @@ app.get('/read', async (req, res) => {
         console.error(error);
         res.status(500).send('An error occurred while fetching the manga chapter.');
     }
+});
+
+// genre-sort
+app.get('/genre/:id', async (req, res) => {
+  const id = req.params.id;
+  const page = JSON.parse(req.query.page) || 1;
+  const genreToId = {
+      'all': 'all',
+      'action': 2,
+      'adult': 3,
+      'adventure': 4,
+      'comedy': 5,
+      'cooking': 6,
+      'doujinshi': 7,
+      'drama': 8,
+      'ecchi': 9,
+      'erotica': 10,
+      'fantasy': 11,
+      'gender bender': 12,
+      'harem': 13,
+      'historical': 14,
+      'horror': 15,
+      'isekai': 16,
+      'josei': 17,
+      'manhua': 18,
+      'manhwa': 19,
+      'martial arts': 20,
+      'mature': 21,
+      'mecha': 22,
+      'medical': 23,
+      'mystery': 24,
+      'one shot': 25,
+      'pornographic': 26,
+      'psychological': 27,
+      'romance': 28,
+      'school life': 29,
+      'sci fi': 30,
+      'seinen': 31,
+      'shoujo': 32,
+      'shoujo ai': 33,
+      'shounen': 34,
+      'shounen ai': 35,
+      'slice of life': 36,
+      'smut': 37,
+      'sports': 38,
+      'supernatural': 39,
+      'tragedy': 40,
+      'webtoons': 41,
+      'yaoi': 42,
+      'yuri': 43
+  };
+  function genreExt(genre){
+    return genreToId[genre.toLowerCase()] || JSON.parse(id);
+  }
+  const newId = genreExt(id)
+  const url = `${ALT}/manga_list?type=topview&category=${newId}&state=all&page=${page}`
+  console.log(`${newId}, ${url}`)
+  try {
+    const { data } = await axios.get(url);
+    const $ = cheerio.load(data);
+    const results = [];
+
+    $('.list-truyen-item-wrap').each((i , el) => {
+      results.push({
+        id: $(el).find('.list-story-item').attr('href').replace('https://chapmanganato.to/','') || '-',
+        title: $(el).find('h3 > a').text().trim(),
+        img: $(el).find('.list-story-item > img').attr('src'),
+        latestChapter: $(el).find('.list-story-item-wrap-chapter').text().trim() || '-',
+        description: $(el).find('p').text().trim()
+      })
+    })
+
+    res.json({genre: id ,results})
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('An error occurred while fetching the genre info');
+  }
 });
 
 app.listen(PORT, () => {
