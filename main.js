@@ -145,8 +145,8 @@ app.get("/latest", async (req, res) => {
 
 // information about the manga
 
-app.get("/info", async (req, res) => {
-  const mangaId = req.query.id;
+app.get("/info/:id", async (req, res) => {
+  const mangaId = req.params.id;
 
   if (!mangaId) {
     return res.status(400).send("Manga ID is required");
@@ -162,6 +162,7 @@ app.get("/info", async (req, res) => {
     const gen_ref = gen_temp[0];
     const mangaInfo = {
       title: $(".story-info-right > h1").text().trim(),
+      image: $(".story-info-left .info-image img").attr("src"),
       altTitle: $("tr:nth-child(1) td:nth-child(2) > h2").text().trim(),
       author: $("tr:nth-child(2) td:nth-child(2)").text().trim(),
       description: $(".panel-story-info-description").text().trim(),
