@@ -193,6 +193,12 @@ app.get("/info/:id", async (req, res) => {
   }
 });
 
+// backwards compat for info page
+app.get("/info", function (req, res) {
+  const id = req.query.id;
+  res.redirect(`/info/${id}`);
+});
+
 // search results
 app.get("/search", async (req, res) => {
   const query = req.query.query;
