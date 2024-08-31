@@ -253,8 +253,8 @@ app.get("/search", async (req, res) => {
 });
 
 // read
-app.get("/read", async (req, res) => {
-  const { id, chapter } = req.query;
+app.get("/read/:id/:chapter", async (req, res) => {
+  const { id, chapter } = req.params;
   const URL = `${BASE_URL}/chapter/${id}/chapter-${chapter}`;
 
   try {
@@ -272,6 +272,11 @@ app.get("/read", async (req, res) => {
     console.error(error);
     res.status(500).send("An error occurred while fetching the manga chapter.");
   }
+});
+// backwards compat for info page
+app.get("/read", function (req, res) {
+  const { id, chapter } = req.query;
+  res.redirect(`/read/${id}/${chapter}`);
 });
 
 // genre-sort
