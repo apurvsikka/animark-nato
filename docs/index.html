@@ -4,9 +4,219 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animark Manga | Documentation</title>
-</head>
-<body>
-<center >DOCS COMING SOON</center>
-    </script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                line-height: 1.6;
+            }
+            header {
+                background: #333;
+                color: #fff;
+                padding: 1rem 0;
+                text-align: center;
+            }
+            .container {
+                padding: 2rem;
+            }
+            h1, h2, h3 {
+                color: #333;
+            }
+            pre {
+                background: #f4f4f4;
+                padding: 1rem;
+                border: 1px solid #ddd;
+                overflow-x: auto;
+            }
+            code {
+                font-family: Consolas, monospace;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 2rem;
+            }
+            th, td {
+                padding: 0.5rem;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+            th {
+                background: #f4f4f4;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Documentation</h1>
+        </header>
+        <div class="container">
+            <section id="introduction">
+                <h2>Introduction</h2>
+                <p>Welcome to the animark-nato. This API provides access to manga information, including top manga, latest releases, detailed manga information, search functionality, and more.</p>
+            </section>
+
+            <section id="base-url">
+                <h2>Base URL</h2>
+                <p>The base URL for all API endpoints is:</p>
+                <pre><code><a href="http://animark-nato.vercel.app" style="color:#333;text-decoration: none;">http://animark-nato.vercel.app</a></code></pre>
+            </section>
+
+            <section id="endpoints">
+                <h2>Endpoints</h2>
+
+                <h3>1. Get Top Manga</h3>
+                <p>Retrieve a list of top-viewed manga.</p>
+                <pre><code>GET /top?page={page}</code></pre>
+                <p><strong>Parameters:</strong></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>page</td>
+                            <td>integer</td>
+                            <td>Optional. Page number for pagination. Defaults to 1.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Response:</strong></p>
+                <pre><code>{
+        "currentPage": 1,
+        "hasNextPage": true,
+        "pageLimit": 999,
+        "results": [
+            {
+                "title": "Manga Title",
+                "image": "https://example.com/image.jpg",
+                "id": "manga-id",
+                "latestChapter": "Chapter 100",
+                "description": "Manga description."
+            },
+            ...
+        ]
+    }</code></pre>
+
+                <h3>2. Get Latest Manga</h3>
+                <p>Retrieve a list of the latest manga releases.</p>
+                <pre><code>GET /latest?page={page}</code></pre>
+                <p><strong>Parameters:</strong></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>page</td>
+                            <td>integer</td>
+                            <td>Optional. Page number for pagination. Defaults to 1.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Response:</strong></p>
+                <pre><code>{
+        "currentPage": 1,
+        "hasNextPage": true,
+        "pageLimit": 999,
+        "results": [
+            {
+                "id": "manga-id",
+                "title": "Manga Title",
+                "image": "https://example.com/image.jpg",
+                "latestChapter": "Chapter 100",
+                "description": "Manga description."
+            },
+            ...
+        ]
+    }</code></pre>
+
+                <h3>3. Get Manga Information</h3>
+                <p>Retrieve detailed information about a specific manga.</p>
+                <pre><code>GET /info/{id}</code></pre>
+                <p><strong>Parameters:</strong></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>id</td>
+                            <td>string</td>
+                            <td>Required. The unique identifier of the manga.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Response:</strong></p>
+                <pre><code>{
+        "title": "Manga Title",
+        "image": "https://example.com/image.jpg",
+        "altTitle": "Alternative Title",
+        "author": "Author Name",
+        "description": "Manga description.",
+        "status": "Ongoing",
+        "genres": ["Action", "Adventure"],
+        "updatedOn": "2024-12-17",
+        "chapters": [
+            {
+                "chapterName": "Chapter 1",
+                "chapterNumber": "1"
+            },
+            ...
+        ]
+    }</code></pre>
+
+                <h3>4. Search Manga</h3>
+                <p>Search for manga by title.</p>
+                <pre><code>GET /search?query={query}</code></pre>
+                <p><strong>Parameters:</strong></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>query</td>
+                            <td>string</td>
+                            <td>Required. The search term for the manga title.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Response:</strong></p>
+                <pre><code>{
+        "query": "search-term",
+        "results": [
+            {
+                "id": "manga-id",
+                "title": "Manga Title",
+                "image": "https://example.com/image.jpg",
+                "link": "https://example.com/manga/manga-id",
+                "latestChapter": "Chapter 100"
+            },
+            ...
+        ]
+    }</code></pre>
+
+                <h3>5. Read Manga Chapter</h3>
+                <p>Retrieve the pages of a specific manga chapter.</p>
+                <pre><code>GET /read/{id}/{chapter}</code></pre>
+
 </body>
 </html>
