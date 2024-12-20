@@ -274,10 +274,10 @@ app.get("/read/:id/:chapter", async (req, res) => {
   }
 });
 // backwards compat for info page
-app.get("/read", function (req, res) {
+/*app.get("/read", function (req, res) {
   const { id, chapter } = req.query;
   res.redirect(`/read/${id}/${chapter}`);
-});
+});*/
 
 // genre-sort
 app.get("/genre/:id", async (req, res) => {
