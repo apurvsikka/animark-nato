@@ -6,8 +6,9 @@ const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const BASE_URL = "https://mangakakalot.tv";
+// const BASE_URL = "https://mangakakalot.tv";
 const ALT = "https://mangakakalot.com";
+const BASE_URL = "https://chapmanganato.to";
 
 // Use cors middleware to allow Cross-Origin requests
 app.use(cors());
@@ -252,19 +253,44 @@ app.get("/search", async (req, res) => {
   }
 });
 
+// hotfix: image proxy
+app.get("/proxy", async (req, res) => {
+  const imageUrl = req.query.image;
+
+  if (!imageUrl) {
+    return res.status(400).send("Image URL is required");
+  }
+
+  try {
+    const response = await axios.get(imageUrl, {
+      responseType: "arraybuffer",
+      headers: {
+        Referer: "https://manganato.com",
+        "User-Agent": "Mozilla/5.0",
+      },
+    });
+
+    res.set("Content-Type", response.headers["content-type"]);
+    res.send(response.data);
+  } catch (error) {
+    console.error("Error fetching image:", error.message);
+    res.status(500).send("Error fetching image");
+  }
+});
+
 // read
 app.get("/read/:id/:chapter", async (req, res) => {
   const { id, chapter } = req.params;
-  const URL = `${BASE_URL}/chapter/${id}/chapter-${chapter}`;
+  const URL = `${BASE_URL}/${id}/chapter-${chapter}`;
 
   try {
     const { data } = await axios.get(URL);
     const $ = cheerio.load(data);
     const mangaPages = [];
 
-    $(".img-loading").each((index, element) => {
-      const pageUrl = $(element).attr("data-src");
-      mangaPages.push(pageUrl);
+    $(".container-chapter-reader img").each((index, element) => {
+      const pageUrl = $(element).attr("src");
+      mangaPages.push(`/proxy?image=${pageUrl}`);
     });
 
     res.json({ id, chapter, pages: mangaPages });
@@ -274,10 +300,10 @@ app.get("/read/:id/:chapter", async (req, res) => {
   }
 });
 // backwards compat for info page
-/*app.get("/read", function (req, res) {
+app.get("/read", function (req, res) {
   const { id, chapter } = req.query;
   res.redirect(`/read/${id}/${chapter}`);
-});*/
+});
 
 // genre-sort
 app.get("/genre/:id", async (req, res) => {
