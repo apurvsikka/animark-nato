@@ -7,7 +7,7 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 // const BASE_URL = "https://mangakakalot.tv";
-const ALT = "https://mangakakalot.com";
+const ALT = "https://mangakakalot.to";
 const BASE_URL = "https://chapmanganato.to";
 
 // Use cors middleware to allow Cross-Origin requests
