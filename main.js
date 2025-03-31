@@ -10,10 +10,9 @@ const PORT = process.env.PORT || 3000;
 const ALT = "https://mangakakalot.to";
 const BASE_URL = "https://chapmanganato.to";
 
-// Use cors middleware to allow Cross-Origin requests
+
 app.use(cors());
 
-// Set Access-Control-Allow-Origin header to allow all origins
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   next();
@@ -88,7 +87,7 @@ app.get("/top", async (req, res) => {
 });
 // latest manga from nato
 app.get("/latest", async (req, res) => {
-  const page = req.query.page || 1; // Default to page 1 if no page query parameter is provided
+  const page = req.query.page || 1;
   const url = `${ALT}/manga_list?type=latest&category=all&state=all&page=${page}`;
   try {
     const { data } = await axios.get(url);
