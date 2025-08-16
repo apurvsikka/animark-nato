@@ -264,7 +264,7 @@ app.get("/proxy", async (req, res) => {
     const response = await axios.get(imageUrl, {
       responseType: "arraybuffer",
       headers: {
-        Referer: "https://manganato.com",
+        Referer: "https://manganato.gg",
         "User-Agent": "Mozilla/5.0",
       },
     });
